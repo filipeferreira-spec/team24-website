@@ -20,6 +20,7 @@ import { eq, and, lt } from "drizzle-orm";
 import { sendLembreteQuestionarioEmail } from "../odoo";
 import { registerTrackingRoutes } from "../trackingRoutes";
 import { registerPrerendered } from "../prerendered";
+import { povoarSeVazio } from "../seed";
 import { syncOdooContactsHandler } from "../syncOdooContacts";
 import { handleProspectingWebhook } from "../routers/crmProspecting";
 import { resumoActividadeHandler } from "../scheduled/resumoActividade";
@@ -298,6 +299,10 @@ async function startServer() {
     registerPrerendered(app, path.resolve(process.cwd(), "dist/public/index.html"));
     serveStatic(app);
   }
+
+  // Povoamento do site de teste (so corre com SEED_ON_START=1, e aborta
+  // se encontrar dados pessoais). Ver server/seed.ts
+  await povoarSeVazio();
 
   const preferredPort = parseInt(process.env.PORT || "3000");
   const port = await findAvailablePort(preferredPort);
