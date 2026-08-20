@@ -1,0 +1,97 @@
+{
+  "version": "7",
+  "dialect": "mysql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1779752202955,
+      "tag": "0000_big_miss_america",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1782945108156,
+      "tag": "0001_overjoyed_kate_bishop",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1782981484955,
+      "tag": "0002_curly_leader",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1784043147780,
+      "tag": "0003_broad_vindicator",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1784047691927,
+      "tag": "0004_workable_amphibian",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1784052021915,
+      "tag": "0005_far_quasimodo",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1784105791714,
+      "tag": "0006_mysterious_mordo",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "5",
+      "when": 1784115824534,
+      "tag": "0007_puzzling_meteorite",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "5",
+      "when": 1784121863346,
+      "tag": "0008_neat_black_tarantula",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "5",
+      "when": 1784130234427,
+      "tag": "0009_wealthy_cobalt_man",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "5",
+      "when": 1784131499537,
+      "tag": "0010_noisy_magus",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "5",
+      "when": 1784135194333,
+      "tag": "0011_noisy_zarda",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "5",
+      "when": 1784804932766,
+      "tag": "0012_chubby_plazm",
+      "breakpoints": true
+    }
+  ]
+}

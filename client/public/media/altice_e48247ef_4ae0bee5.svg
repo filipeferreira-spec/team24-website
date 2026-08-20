@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 50" width="160" height="50">
+  <rect width="160" height="50" fill="transparent"/>
+  <!-- Altice red dot -->
+  <circle cx="12" cy="25" r="8" fill="#E30613"/>
+  <!-- altice text -->
+  <text x="28" y="32" font-family="'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="22" font-weight="300" fill="#000000" text-anchor="start" letter-spacing="-0.5">altice</text>
+</svg>

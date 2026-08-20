@@ -1,0 +1,440 @@
+/* ============================================================
+   TEAM 24 — Design System v2: "Editorial Clarity"
+   
+   Philosophy: Award-winning editorial design. No cards, no shadows.
+   Typography IS the design. Asymmetric layouts. Extreme whitespace.
+   Inspired by: Linear, Vercel, Awwwards 2024 winners.
+   
+   Palette (alinhada com logo oficial TEAM 24):
+   - Ink:    #0A1A2A (azul muito escuro, primary text)
+   - Cream:  #F5F8FA (branco frio suave, primary background)
+   - Teal:   #25749F (azul petróleo do logo)
+   - Coral:  #DB5C34 (laranja do logo)
+   - Stone:  #6B8A9F (azul acinzentado, secondary text)
+   - Pale:   #E8F0F5 (azul muito claro, dividers/subtle bg)
+   
+   Typography:
+   - Display: "Lato" — editorial serif for headlines
+   - Body:    "Plus Jakarta Sans" — clean, humanist sans for body text
+   - Mono:    "JetBrains Mono" — for numbers/stats
+   ============================================================ */
+
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+:root {
+  /* Brand tokens */
+  --ink: #0A1A2A;
+  --cream: #F5F8FA;
+  --teal: #25749F;
+  --teal-light: #3A8FBF;
+  --coral: #DB5C34;
+  --coral-dark: #B84520;
+  --stone: #6B8A9F;
+  --pale: #E8F0F5;
+  --pale-mid: #D0E2EC;
+
+  /* Shadcn tokens */
+  --radius: 0.25rem;
+  --background: #F5F8FA;
+  --foreground: #0A1A2A;
+  --card: #EBF4FA;
+  --card-foreground: #0A1A2A;
+  --popover: #F5F8FA;
+  --popover-foreground: #0A1A2A;
+  --primary: #25749F;
+  --primary-foreground: #F5F8FA;
+  --secondary: #E8F0F5;
+  --secondary-foreground: #0A1A2A;
+  --muted: #E8F0F5;
+  --muted-foreground: #6B8A9F;
+  --accent: #DB5C34;
+  --accent-foreground: #F5F8FA;
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.985 0 0);
+  --border: #D0E2EC;
+  --input: #D0E2EC;
+  --ring: #25749F;
+  --chart-1: #DB5C34;
+  --chart-2: #25749F;
+  --chart-3: #6B8A9F;
+  --chart-4: #B84520;
+  --chart-5: #3A8FBF;
+  --sidebar: #EBF4FA;
+  --sidebar-foreground: #0A1A2A;
+  --sidebar-primary: #25749F;
+  --sidebar-primary-foreground: #F5F8FA;
+  --sidebar-accent: #E8F0F5;
+  --sidebar-accent-foreground: #0A1A2A;
+  --sidebar-border: #D0E2EC;
+  --sidebar-ring: #25749F;
+}
+
+/* ── Font size lock: prevent CLS from font-size changes ── */
+@font-face {
+  font-family: 'Lato';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lato Regular'), local('Lato-Regular');
+  size-adjust: 100%;
+  ascent-override: 95%;
+  descent-override: 22%;
+  line-gap-override: 0%;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+    box-sizing: border-box;
+  }
+  html {
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+  }
+  body {
+    background-color: #F5F8FA;
+    color: var(--ink);
+    /* Use system fonts as fallback to reduce CLS before web fonts load */
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+    width: 100%;
+  }
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  a[href] {
+    cursor: pointer;
+  }
+}
+
+@layer components {
+  /* ── Container ─────────────────────────────────────────── */
+  .container {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    max-width: 100%;
+  }
+  @media (min-width: 640px) {
+    .container { padding-left: 2rem; padding-right: 2rem; }
+  }
+  @media (min-width: 768px) {
+    .container { padding-left: 3rem; padding-right: 3rem; max-width: 100%; }
+  }
+  @media (min-width: 1024px) {
+    .container { padding-left: 4rem; padding-right: 4rem; max-width: 1280px; }
+  }
+  @media (min-width: 1280px) {
+    .container { max-width: 1400px; padding-left: 5rem; padding-right: 5rem; }
+  }
+  @media (min-width: 1536px) {
+    .container { max-width: 1600px; }
+  }
+
+  .flex { min-height: 0; min-width: 0; }
+
+  /* ── Typography ─────────────────────────────────────────── */
+  .t-display {
+    font-family: 'Lato', sans-serif;
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+  .t-display-xl {
+    font-family: 'Lato', sans-serif;
+    font-weight: 700;
+    font-size: clamp(3.5rem, 8vw, 8rem);
+    line-height: 1.0;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+  }
+  .t-heading {
+    font-family: 'Lato', sans-serif;
+    font-weight: 600;
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+  .t-subheading {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 500;
+    font-size: clamp(1rem, 1.5vw, 1.25rem);
+    line-height: 1.6;
+    color: var(--stone);
+  }
+  .t-label {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 600;
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--coral);
+  }
+  .t-stat {
+    font-family: 'Lato', sans-serif;
+    font-weight: 700;
+    font-size: clamp(2.5rem, 5vw, 5rem);
+    line-height: 1.0;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+  }
+
+  /* ── Buttons ─────────────────────────────────────────────── */
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.875rem 2rem;
+    background-color: var(--ink);
+    color: var(--cream);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 600;
+    font-size: 0.9rem;
+    letter-spacing: 0.01em;
+    border-radius: 0;
+    border: 1.5px solid var(--ink);
+    transition: all 0.2s ease;
+    text-decoration: none;
+  }
+  .btn-primary:hover {
+    background-color: transparent;
+    color: var(--ink);
+  }
+  .btn-coral {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.875rem 2rem;
+    background-color: var(--coral);
+    color: white;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 600;
+    font-size: 0.9rem;
+    letter-spacing: 0.01em;
+    border-radius: 0;
+    border: 1.5px solid var(--coral);
+    transition: all 0.2s ease;
+    text-decoration: none;
+  }
+  .btn-coral:hover {
+    background-color: var(--coral-dark);
+    border-color: var(--coral-dark);
+  }
+  .btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.875rem 2rem;
+    background-color: transparent;
+    color: var(--ink);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 500;
+    font-size: 0.9rem;
+    border-radius: 0;
+    border: 1.5px solid var(--pale-mid);
+    transition: all 0.2s ease;
+    text-decoration: none;
+  }
+  .btn-ghost:hover {
+    border-color: var(--ink);
+  }
+
+  /* ── Dividers ─────────────────────────────────────────────── */
+  .rule {
+    width: 100%;
+    height: 1px;
+    background-color: var(--pale-mid);
+  }
+  .rule-short {
+    width: 3rem;
+    height: 2px;
+    background-color: var(--coral);
+  }
+
+  /* ── Sections ─────────────────────────────────────────────── */
+  .section-cream { background-color: var(--cream); }
+  .section-pale  { background-color: var(--pale); }
+  .section-ink   { background-color: var(--ink); }
+  .section-teal  { background-color: var(--teal); }
+
+  /* ── Animations ─────────────────────────────────────────────── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(32px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+  @keyframes slideRight {
+    from { transform: scaleX(0); transform-origin: left; }
+    to   { transform: scaleX(1); transform-origin: left; }
+  }
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+
+  .anim-fade-up {
+    opacity: 0;
+    animation: fadeUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+  .anim-fade-in {
+    opacity: 0;
+    animation: fadeIn 0.6s ease forwards;
+  }
+
+  /* Intersection observer reveal */
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .reveal-left {
+    opacity: 0;
+    transform: translateX(-32px);
+    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .reveal-left.visible {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  .reveal-right {
+    opacity: 0;
+    transform: translateX(32px);
+    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .reveal-right.visible {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  /* ── Marquee ─────────────────────────────────────────────── */
+  .marquee-track {
+    display: flex;
+    animation: marquee 150s linear infinite;
+    width: max-content;
+  }
+  .marquee-track:hover { animation-play-state: paused; }
+
+  /* ── Horizontal rule with text ─────────────────────────────── */
+  .hr-label {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: var(--stone);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+  .hr-label::before,
+  .hr-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background-color: var(--pale-mid);
+  }
+
+  /* ── Nav link ─────────────────────────────────────────────── */
+  .nav-link {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--ink);
+    text-decoration: none;
+    background: none;
+    border: none;
+    padding: 0;
+    transition: color 0.15s ease;
+    opacity: 0.7;
+  }
+  .nav-link:hover { opacity: 1; color: var(--ink); }
+
+  /* ── Scrollbar hide ─────────────────────────────────────────── */
+  .scrollbar-hide::-webkit-scrollbar { display: none; }
+  .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+  /* ── Number counter ─────────────────────────────────────────── */
+  .counter-value {
+    font-family: 'Lato', sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    color: var(--ink);
+  }
+
+  /* ── Overline decoration ─────────────────────────────────────── */
+  .overline-coral {
+    position: relative;
+  }
+  .overline-coral::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background-color: var(--coral);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .overline-coral.visible::after,
+  .overline-coral:hover::after {
+    transform: scaleX(1);
+  }
+}

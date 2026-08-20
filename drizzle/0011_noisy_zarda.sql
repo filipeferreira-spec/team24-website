@@ -1,0 +1,1 @@
+ALTER TABLE `equipa` ADD `tipoContrato` enum('full_time','part_time','freelancer','estagio','avenca','outro');

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 50" width="140" height="50">
+  <rect width="140" height="50" fill="transparent"/>
+  <!-- BPI blue bar -->
+  <rect x="0" y="10" width="6" height="30" rx="3" fill="#003087"/>
+  <!-- BPI text -->
+  <text x="16" y="34" font-family="Arial Black,Arial,sans-serif" font-size="26" font-weight="900" fill="#003087" text-anchor="start" letter-spacing="2">BPI</text>
+</svg>

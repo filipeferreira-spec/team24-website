@@ -1,0 +1,23 @@
+{
+  "name": "TEAM 24 — EAP Portugal",
+  "short_name": "TEAM 24",
+  "description": "A plataforma EAP líder em Portugal. Apoio psicológico, jurídico, financeiro e nutricional para colaboradores.",
+  "start_url": "/",
+  "display": "browser",
+  "background_color": "#ffffff",
+  "theme_color": "#25749F",
+  "lang": "pt-PT",
+  "icons": [
+    {
+      "src": "/favicon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/favicon-32x32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    }
+  ]
+}

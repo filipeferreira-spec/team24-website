@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 50" width="200" height="50">
+  <rect width="200" height="50" fill="transparent"/>
+  <!-- JM green square icon -->
+  <rect x="0" y="5" width="40" height="40" rx="4" fill="#1A6B2A"/>
+  <text x="20" y="32" font-family="Arial Black,Arial,sans-serif" font-size="20" font-weight="900" fill="white" text-anchor="middle">JM</text>
+  <!-- Text -->
+  <text x="50" y="22" font-family="Arial,sans-serif" font-size="11" font-weight="700" fill="#1A6B2A" text-anchor="start">JERÓNIMO</text>
+  <text x="50" y="38" font-family="Arial,sans-serif" font-size="11" font-weight="700" fill="#1A6B2A" text-anchor="start">MARTINS</text>
+</svg>

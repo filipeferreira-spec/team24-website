@@ -1,0 +1,14 @@
+User-agent: *
+Allow: /
+
+# Bloquear backoffice e rotas privadas
+Disallow: /backoffice/
+Disallow: /backoffice
+Disallow: /questionario/
+Disallow: /api/
+
+# Landing pages de conversão (não indexar)
+Disallow: /demo
+
+# Sitemap
+Sitemap: https://www.team24.pt/sitemap.xml
