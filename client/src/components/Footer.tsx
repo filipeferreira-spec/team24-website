@@ -274,7 +274,7 @@ export default function Footer() {
             >
               Entidade registada na ERS — Entidade Reguladora da Saúde · Registo n.º e161272
               <a
-                href="https://d2xsxph8kpxj0f.cloudfront.net/310519663363432287/etHeMqbLvGKFQzp64hcWsg/CertificadoERS2026_b4dc9d61.pdf"
+                href="/media/CertificadoERS2026_b4dc9d61.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
                 download="CertificadoERS2026.pdf"

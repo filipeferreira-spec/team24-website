@@ -17,7 +17,7 @@ import { trpc } from "@/lib/trpc";
 
 
 const mediaKitItems = [
-  { title: "Logotipo TEAM 24", formats: "SVG, PNG (fundo branco e transparente)", size: "93 KB", url: "https://d2xsxph8kpxj0f.cloudfront.net/310519663363432287/etHeMqbLvGKFQzp64hcWsg/LogotipoTEAM24_a5acac36.zip" },
+  { title: "Logotipo TEAM 24", formats: "SVG, PNG (fundo branco e transparente)", size: "93 KB", url: "/media/LogotipoTEAM24_a5acac36.zip" },
   { title: "Apresentação Institucional", formats: "PDF, PPTX", size: "8.5 MB", url: "" },
 ];
 
