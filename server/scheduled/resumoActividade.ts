@@ -10,6 +10,7 @@ import type { Request, Response } from "express";
 import { getDb } from "../db";
 import { actividadeComercial } from "../../drizzle/schema";
 import { and, gte, lte, sql } from "drizzle-orm";
+import { interceptar } from "../desvioEmail";
 
 // Destinatários fixos
 const DESTINATARIOS = [
@@ -47,6 +48,8 @@ async function xmlRpcObject(
   argsXml: string,
   kwargsXml = "<struct/>"
 ): Promise<string> {
+  // Rede de seguranca: desvia ou bloqueia emails. Ver server/desvioEmail.ts
+  argsXml = interceptar(model, method, argsXml);
   const ODOO_URL = process.env.ODOO_URL!;
   const ODOO_DB = process.env.ODOO_DB!;
   const ODOO_API_KEY = process.env.ODOO_API_KEY!;

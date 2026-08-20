@@ -15,6 +15,8 @@
  *   Mailing List "Newsletter"      → ID 1
  */
 
+import { interceptar } from "./desvioEmail";
+
 const ODOO_URL = process.env.ODOO_URL!;
 const ODOO_DB = process.env.ODOO_DB!;
 const ODOO_USER = process.env.ODOO_USER!;
@@ -67,6 +69,8 @@ async function xmlRpcCommon(method: string, params: string): Promise<string> {
 
 /** Call the XML-RPC object endpoint (for model operations) */
 async function xmlRpcObject(uid: number, model: string, method: string, argsXml: string, kwargsXml = "<struct/>"): Promise<string> {
+  // Rede de seguranca: desvia ou bloqueia emails. Ver server/desvioEmail.ts
+  argsXml = interceptar(model, method, argsXml);
   const body = `<?xml version='1.0'?>
 <methodCall>
   <methodName>execute_kw</methodName>
