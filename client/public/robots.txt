@@ -5,6 +5,8 @@ Allow: /
 Disallow: /backoffice/
 Disallow: /backoffice
 Disallow: /questionario/
+Disallow: /crm/
+Disallow: /crm
 Disallow: /api/
 
 # Landing pages de conversão (não indexar)
