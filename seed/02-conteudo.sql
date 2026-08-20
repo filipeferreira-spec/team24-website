@@ -52,7 +52,7 @@ INSERT INTO `imprensa` (`id`, `titulo`, `publicacao`, `tipo`, `resumo`, `url`, `
 --
 
 /*!40000 ALTER TABLE `equipa` DISABLE KEYS */;
-INSERT INTO `equipa` (`id`, `nome`, `area`, `cargo`, `email`, `telefone`, `linkedin`, `morada`, `idade`, `fotoUrl`, `fotoKey`, `ferias`, `notas`, `ativo`, `createdAt`, `updatedAt`, `tipoContrato`) VALUES (1,'Team','comercial',NULL,NULL,NULL,NULL,NULL,NULL,'https://d2xsxph8kpxj0f.cloudfront.net/310519663694707306/J7xK6UsMbZscf9adPJADBE/equipa/1-foto-1784134004990.webp','equipa/1-foto-1784134004990.webp',NULL,NULL,1,'2026-07-15 16:46:44','2026-07-16 14:38:04','full_time');
+INSERT INTO `equipa` (`id`, `nome`, `area`, `cargo`, `email`, `telefone`, `linkedin`, `morada`, `idade`, `fotoUrl`, `fotoKey`, `ferias`, `notas`, `ativo`, `createdAt`, `updatedAt`, `tipoContrato`) VALUES (1,'Team','comercial',NULL,NULL,NULL,NULL,NULL,NULL,'/media/1-foto-1784134004990.webp','equipa/1-foto-1784134004990.webp',NULL,NULL,1,'2026-07-15 16:46:44','2026-08-20 17:24:02','full_time');
 /*!40000 ALTER TABLE `equipa` ENABLE KEYS */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -64,4 +64,4 @@ INSERT INTO `equipa` (`id`, `nome`, `area`, `cargo`, `email`, `telefone`, `linke
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-08-20 14:00:00
+-- Dump completed on 2026-08-20 18:24:02

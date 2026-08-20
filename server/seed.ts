@@ -26,6 +26,35 @@ async function correrFicheiro(con: mysql.Connection, ficheiro: string) {
   await con.query(limpo);
 }
 
+async function corrigirEnderecosAntigos(con: mysql.Connection) {
+  // Se uma base ja povoada ainda tiver enderecos do CDN da Manus, passam a
+  // apontar para /media/. Barato e sem efeito se ja estiver tudo certo.
+  const alvos: Array<[string, string]> = [
+    ["equipa", "fotoUrl"],
+    ["casos", "imagemUrl"],
+    ["casos", "logoUrl"],
+    ["recursos", "imageUrl"],
+    ["imprensa", "imagemUrl"],
+  ];
+  let corrigidos = 0;
+  for (const [tabela, coluna] of alvos) {
+    const sql =
+      "UPDATE `" + tabela + "` SET `" + coluna + "` = " +
+      "CONCAT('/media/', SUBSTRING_INDEX(`" + coluna + "`, '/', -1)) " +
+      "WHERE `" + coluna + "` LIKE '%cloudfront.net%' " +
+      "   OR `" + coluna + "` LIKE '%manuscdn.com%'";
+    try {
+      const [r]: any = await con.query(sql);
+      corrigidos += r.affectedRows || 0;
+    } catch {
+      /* a coluna pode nao existir nesta versao do esquema */
+    }
+  }
+  if (corrigidos > 0) {
+    console.log("[Povoamento] " + corrigidos + " enderecos do CDN da Manus reescritos para /media/");
+  }
+}
+
 export async function povoarSeVazio() {
   if (process.env.SEED_ON_START !== "1") return;
   if (!process.env.DATABASE_URL) {
@@ -80,6 +109,11 @@ export async function povoarSeVazio() {
       const [[{ n: agora }]] = await con.query<any[]>("SELECT COUNT(*) n FROM `recursos`");
       console.log(`[Povoamento] conteudo carregado (${agora} recursos)`);
     }
+
+    // --- Enderecos antigos do CDN da Manus ---------------------------------
+    // Corre sempre (e barato e nao repete efeito): se uma base ja povoada
+    // ainda tiver enderecos do CDN, passam a apontar para /media/.
+    await corrigirEnderecosAntigos(con);
 
     // --- Conta de acesso ao backoffice -------------------------------------
     // Sem esta, o backoffice fica inacessivel: as contas de administrador
