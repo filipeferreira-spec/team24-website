@@ -119,6 +119,36 @@ export async function povoarSeVazio() {
     // Sem esta, o backoffice fica inacessivel: as contas de administrador
     // vivem numa tabela de dados pessoais que nao foi copiada.
     const [[{ n: admins }]] = await con.query<any[]>("SELECT COUNT(*) n FROM `backoffice_admins`");
+    const reporPedido = process.env.REPOR_ADMIN_TESTE === "1";
+    if (admins > 0 && reporPedido) {
+      // A palavra-passe da conta de teste so aparece no registo uma vez, no
+      // arranque em que e criada. Se se perder, define REPOR_ADMIN_TESTE=1,
+      // republica, le a nova no registo, e volta a tirar a variavel.
+      const crypto = await import("node:crypto");
+      const senha = crypto.randomBytes(18).toString("base64url");
+      const segredo = process.env.JWT_SECRET || "";
+      if (!segredo) {
+        console.error("[Povoamento] JWT_SECRET nao definida; nao reponho a conta de teste.");
+      } else {
+        const hash = crypto.createHmac("sha256", segredo).update(senha).digest("hex");
+        const [r]: any = await con.query(
+          "UPDATE `backoffice_admins` SET passwordHash = ?, ativo = 1 WHERE username = ?",
+          [hash, "teste"]
+        );
+        if (r.affectedRows === 0) {
+          await con.query(
+            "INSERT INTO `backoffice_admins` (username, passwordHash, nome, email, ativo, role) VALUES (?,?,?,?,1,?)",
+            ["teste", hash, "Conta de teste", "teste@exemplo.invalid", "superadmin"]
+          );
+        }
+        console.log("=".repeat(64));
+        console.log("[Povoamento] palavra-passe da conta de teste REPOSTA");
+        console.log("   utilizador: teste");
+        console.log(`   palavra-passe: ${senha}`);
+        console.log("   >>> tira a variavel REPOR_ADMIN_TESTE depois de entrares <<<");
+        console.log("=".repeat(64));
+      }
+    }
     if (admins === 0) {
       const crypto = await import("node:crypto");
       const senha = crypto.randomBytes(18).toString("base64url");
