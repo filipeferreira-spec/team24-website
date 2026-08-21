@@ -160,6 +160,150 @@ export const backofficeRouter = router({
       return { success: true };
     }),
 
+  // ── GESTAO DE CONTAS DO BACKOFFICE ────────────────────────────────────────
+  // Nao existia forma nenhuma de mudar uma palavra-passe: as contas eram criadas
+  // uma vez e ficavam assim para sempre. Isto e o que faltava.
+
+  admins: router({
+    list: boProtectedProcedure.query(async () => {
+      const db = await getDb();
+      if (!db) return [];
+      const linhas = await db.select().from(backofficeAdmins);
+      // Nunca devolver os resumos das palavras-passe ao browser.
+      return linhas.map(a => ({
+        id: a.id,
+        username: a.username,
+        nome: a.nome,
+        email: a.email,
+        role: a.role,
+        ativo: a.ativo,
+        lastLogin: a.lastLogin,
+      }));
+    }),
+
+    /** Mudar a propria palavra-passe. Exige a actual. */
+    alterarMinhaPassword: boProtectedProcedure
+      .input(
+        z.object({
+          passwordActual: z.string().min(1),
+          passwordNova: z.string().min(10, "A nova palavra-passe tem de ter pelo menos 10 caracteres."),
+        })
+      )
+      .mutation(async ({ input, ctx }) => {
+        const db = await getDb();
+        if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Base de dados indisponível." });
+
+        const eu = (ctx as any).boAdmin;
+        const [conta] = await db
+          .select()
+          .from(backofficeAdmins)
+          .where(eq(backofficeAdmins.id, eu.adminId))
+          .limit(1);
+
+        if (!conta || conta.passwordHash !== hashPassword(input.passwordActual)) {
+          throw new TRPCError({ code: "UNAUTHORIZED", message: "A palavra-passe actual não está correcta." });
+        }
+        if (input.passwordNova === input.passwordActual) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: "A nova palavra-passe tem de ser diferente da actual." });
+        }
+
+        await db
+          .update(backofficeAdmins)
+          .set({ passwordHash: hashPassword(input.passwordNova), updatedAt: new Date() })
+          .where(eq(backofficeAdmins.id, conta.id));
+
+        return { success: true };
+      }),
+
+    /** Criar outra conta. So quem for superadmin. */
+    criar: boProtectedProcedure
+      .input(
+        z.object({
+          username: z.string().min(3).max(100),
+          password: z.string().min(10, "A palavra-passe tem de ter pelo menos 10 caracteres."),
+          nome: z.string().optional(),
+          email: z.string().email().optional(),
+          role: z.enum(["superadmin", "comercial"]).default("superadmin"),
+        })
+      )
+      .mutation(async ({ input, ctx }) => {
+        const eu = (ctx as any).boAdmin;
+        if (eu.role !== "superadmin") {
+          throw new TRPCError({ code: "FORBIDDEN", message: "Só um superadmin pode criar contas." });
+        }
+        const db = await getDb();
+        if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Base de dados indisponível." });
+
+        const jaExiste = await db
+          .select()
+          .from(backofficeAdmins)
+          .where(eq(backofficeAdmins.username, input.username))
+          .limit(1);
+        if (jaExiste.length > 0) {
+          throw new TRPCError({ code: "CONFLICT", message: `Já existe uma conta com o utilizador "${input.username}".` });
+        }
+
+        await db.insert(backofficeAdmins).values({
+          username: input.username,
+          passwordHash: hashPassword(input.password),
+          nome: input.nome || input.username,
+          email: input.email || null,
+          role: input.role,
+          ativo: true,
+        });
+        return { success: true };
+      }),
+
+    /** Definir a palavra-passe de outra conta. So superadmin. */
+    redefinirPassword: boProtectedProcedure
+      .input(
+        z.object({
+          id: z.number(),
+          passwordNova: z.string().min(10, "A palavra-passe tem de ter pelo menos 10 caracteres."),
+        })
+      )
+      .mutation(async ({ input, ctx }) => {
+        const eu = (ctx as any).boAdmin;
+        if (eu.role !== "superadmin") {
+          throw new TRPCError({ code: "FORBIDDEN", message: "Só um superadmin pode redefinir palavras-passe." });
+        }
+        const db = await getDb();
+        if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Base de dados indisponível." });
+
+        await db
+          .update(backofficeAdmins)
+          .set({ passwordHash: hashPassword(input.passwordNova), updatedAt: new Date() })
+          .where(eq(backofficeAdmins.id, input.id));
+        return { success: true };
+      }),
+
+    /** Desactivar uma conta. Nunca a propria, para nao ficar ninguem de fora. */
+    desactivar: boProtectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input, ctx }) => {
+        const eu = (ctx as any).boAdmin;
+        if (eu.role !== "superadmin") {
+          throw new TRPCError({ code: "FORBIDDEN", message: "Só um superadmin pode desactivar contas." });
+        }
+        if (eu.adminId === input.id) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: "Não podes desactivar a tua própria conta." });
+        }
+        const db = await getDb();
+        if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Base de dados indisponível." });
+
+        const activas = await db.select().from(backofficeAdmins).where(eq(backofficeAdmins.ativo, true));
+        if (activas.length <= 1) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: "Tem de ficar pelo menos uma conta activa." });
+        }
+
+        await db
+          .update(backofficeAdmins)
+          .set({ ativo: false, updatedAt: new Date() })
+          .where(eq(backofficeAdmins.id, input.id));
+        return { success: true };
+      }),
+  }),
+
   // ── RECURSOS ──────────────────────────────────────────────────────────────
 
   recursos: router({

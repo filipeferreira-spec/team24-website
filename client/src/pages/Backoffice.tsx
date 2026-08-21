@@ -3,8 +3,9 @@ import { trpc } from "@/lib/trpc";
 import { useLocation } from "wouter";
 import { FileUpload } from "@/components/FileUpload";
 import BackofficeOutreach from "./BackofficeOutreach";
+import ContasSection from "@/components/ContasSection";
 
-type Section = "recursos" | "casos" | "imprensa" | "carreiras" | "questionarios" | "candidaturas" | "envio_massa" | "outreach";
+type Section = "recursos" | "casos" | "imprensa" | "carreiras" | "questionarios" | "candidaturas" | "envio_massa" | "outreach" | "contas";
 
 const SECTIONS: { id: Section; label: string; group?: string }[] = [
   { id: "recursos", label: "Recursos" },
@@ -14,6 +15,7 @@ const SECTIONS: { id: Section; label: string; group?: string }[] = [
   { id: "candidaturas", label: "Candidaturas" },
   { id: "questionarios", label: "Questionários" },
   { id: "outreach", label: "Campanhas Outreach", group: "comercial" },
+  { id: "contas", label: "Contas de acesso" },
 ];
 
 const inputStyle: React.CSSProperties = {
@@ -653,6 +655,7 @@ export default function Backoffice() {
           {activeSection === "questionarios" && <QuestionariosSection />}
           {activeSection === "envio_massa" && <EnvioMassaSection />}
           {activeSection === "outreach" && <BackofficeOutreach />}
+          {activeSection === "contas" && <ContasSection />}
         </div>
       </main>
     </div>
