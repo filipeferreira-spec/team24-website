@@ -1106,24 +1106,45 @@ export const crmRouter = router({
         return { success: true };
       }),
 
-    seedAdmin: crmProcedure
-      .input(z.object({ secret: z.string() }))
+    /**
+     * Aqui existia um "seedAdmin" que criava a conta admin@team24.pt com uma
+     * palavra-passe escrita no codigo:
+     *
+     *     passwordHash: hashPassword("<uma palavra-passe literal>")
+     *
+     * Qualquer pessoa com acesso ao repositorio a conhecia, e cada chamada
+     * recriava a conta com ela mesmo depois de alguem a mudar. Removido.
+     *
+     * A conta inicial do CRM passa a ser criada no arranque, com palavra-passe
+     * aleatoria escrita no registo. Ver server/seed.ts.
+     */
+
+    /** Mudar a propria palavra-passe. Nao existia: so um admin podia mudar a de outros. */
+    alterarMinhaPassword: crmProcedure
+      .input(
+        z.object({
+          passwordActual: z.string().min(1),
+          passwordNova: z.string().min(10, "A nova palavra-passe tem de ter pelo menos 10 caracteres."),
+        })
+      )
       .mutation(async ({ input, ctx }) => {
-        if (input.secret !== (process.env.JWT_SECRET || "crm-secret-key")) {
-          throw new TRPCError({ code: "FORBIDDEN" });
-        }
+        const sessao = requireCrmAuth(ctx);
         const db = await getDb();
         if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "BD indisponível." });
-        const [existing] = await db.select().from(crmUsers).where(eq(crmUsers.email, "admin@team24.pt")).limit(1);
-        if (existing) return { message: "Admin já existe", id: existing.id };
-        const [result] = await db.insert(crmUsers).values({
-          nome: "Administrador TEAM 24",
-          email: "admin@team24.pt",
-          passwordHash: hashPassword("Madsheep2015!"),
-          role: "admin",
-          ativo: true,
-        });
-        return { message: "Admin criado", id: (result as any).insertId };
+
+        const [eu] = await db.select().from(crmUsers).where(eq(crmUsers.id, sessao.userId)).limit(1);
+        if (!eu || eu.passwordHash !== hashPassword(input.passwordActual)) {
+          throw new TRPCError({ code: "UNAUTHORIZED", message: "A palavra-passe actual não está correcta." });
+        }
+        if (input.passwordNova === input.passwordActual) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: "A nova palavra-passe tem de ser diferente da actual." });
+        }
+
+        await db
+          .update(crmUsers)
+          .set({ passwordHash: hashPassword(input.passwordNova), updatedAt: new Date() })
+          .where(eq(crmUsers.id, eu.id));
+        return { success: true };
       }),
   }),
 

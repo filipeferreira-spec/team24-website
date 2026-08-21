@@ -169,6 +169,37 @@ export async function povoarSeVazio() {
         console.log("=".repeat(64));
       }
     }
+
+    // --- Conta de acesso ao CRM -------------------------------------------
+    // Mesma logica do backoffice: os utilizadores do CRM vivem numa tabela de
+    // dados pessoais que nao e copiada, portanto num site de teste nao ha por
+    // onde entrar.
+    const [[{ n: crmContas }]] = await con.query<any[]>("SELECT COUNT(*) n FROM `crm_users`");
+    if (crmContas === 0 || reporPedido) {
+      const crypto = await import("node:crypto");
+      const senha = crypto.randomBytes(18).toString("base64url");
+      const segredo = process.env.JWT_SECRET || "";
+      if (!segredo) {
+        console.error("[Povoamento] JWT_SECRET nao definida; conta de CRM NAO criada");
+      } else {
+        const hash = crypto.createHmac("sha256", segredo).update(senha).digest("hex");
+        const [r]: any = await con.query(
+          "UPDATE `crm_users` SET passwordHash = ?, ativo = 1 WHERE email = ?",
+          [hash, "teste@exemplo.invalid"]
+        );
+        if (r.affectedRows === 0) {
+          await con.query(
+            "INSERT INTO `crm_users` (nome, email, passwordHash, role, ativo) VALUES (?,?,?,?,1)",
+            ["Conta de teste", "teste@exemplo.invalid", hash, "admin"]
+          );
+        }
+        console.log("=".repeat(64));
+        console.log("[Povoamento] conta de teste do CRM");
+        console.log("   email: teste@exemplo.invalid");
+        console.log("   palavra-passe: " + senha);
+        console.log("=".repeat(64));
+      }
+    }
   } catch (e) {
     console.error("[Povoamento] falhou:", e);
   } finally {
