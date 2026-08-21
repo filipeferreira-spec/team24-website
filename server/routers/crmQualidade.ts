@@ -185,7 +185,7 @@ export const crmQualidadeRouter = router({
       dadosActuais: z.record(z.string(), z.any()).optional(), // campos já preenchidos na empresa
     }))
     .mutation(async ({ input }) => {
-      const { invokeLLM } = await import("../_core/llm");
+      const { invokeLLM } = await import("../ia");
 
       // Filtrar apenas campos realmente vazios (sem dados actuais)
       const dadosActuais = input.dadosActuais || {};
@@ -216,6 +216,7 @@ IMPORTANTE: Usa o teu conhecimento de treino para preencher o máximo de campos 
 
       try {
         const response = await invokeLLM({
+      effort: "medium", // pesquisa de dados de empresas
           model: "gpt-4o",
           messages: [
             { role: "system", content: "És um assistente especializado em pesquisa de informações sobre empresas portuguesas. Respondes sempre com JSON válido e preciso." },

@@ -7,7 +7,6 @@ import { createServer } from "http";
 import net from "net";
 import multer from "multer";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
-import { registerOAuthRoutes } from "./oauth";
 import { registerStorageProxy } from "./storageProxy";
 import { appRouter } from "../routers";
 import { createContext } from "./context";
@@ -43,6 +42,26 @@ async function findAvailablePort(startPort: number = 3000): Promise<number> {
     }
   }
   throw new Error(`No available port found starting from ${startPort}`);
+}
+
+/**
+ * Varios ficheiros escrevem  process.env.JWT_SECRET || "backoffice-secret-key"  e
+ * semelhantes. Esse valor de recurso esta no codigo: sem a variavel definida, o
+ * segredo que assina as sessoes e gera os hashes das palavras-passe seria conhecido
+ * de qualquer pessoa que leia o repositorio.
+ *
+ * Em producao, mais vale nao arrancar do que arrancar assim.
+ */
+function exigirSegredo() {
+  if (process.env.JWT_SECRET) return;
+  const aviso =
+    "JWT_SECRET nao esta definida. Sem ela, o segredo que protege os logins do " +
+    "backoffice e do CRM passa a ser um valor escrito no codigo.";
+  if (process.env.NODE_ENV === "production") {
+    console.error("[Arranque] " + aviso + " A recusar arrancar.");
+    process.exit(1);
+  }
+  console.warn("[Arranque] " + aviso + " Aceitavel so em desenvolvimento.");
 }
 
 async function startServer() {
@@ -90,7 +109,6 @@ async function startServer() {
           ],
           connectSrc: [
             "'self'",
-            "https://api.manus.im",
             "https://maps.googleapis.com",
             "https://calendly.com",
             "https://api.calendly.com",
@@ -155,8 +173,6 @@ async function startServer() {
   // Storage proxy: serve /manus-storage/* via signed CDN URLs
   registerStorageProxy(app);
 
-  // OAuth callback under /api/oauth/callback
-  registerOAuthRoutes(app);
 
   // Email tracking: pixel de abertura + redirect de cliques
   registerTrackingRoutes(app);
@@ -316,4 +332,5 @@ async function startServer() {
   });
 }
 
+exigirSegredo();
 startServer().catch(console.error);

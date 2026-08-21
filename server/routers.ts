@@ -4,7 +4,7 @@ import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, router } from "./_core/trpc";
 import { TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
-import { invokeLLM } from "./_core/llm";
+import { invokeLLM } from "./ia";
 import { generateBlogArticle } from "./blogAutoGenerator";
 import { z } from "zod";
 import { backofficeRouter } from "./routers/backoffice";
@@ -432,7 +432,12 @@ export const appRouter = router({
       .input(z.object({ secret: z.string() }))
       .mutation(async ({ input }) => {
         // Simple secret key check to prevent unauthorized triggers
-        const expectedSecret = process.env.JWT_SECRET || "blog-auto-gen-secret";
+        const expectedSecret = process.env.JWT_SECRET;
+          if (!expectedSecret) {
+            // Sem segredo definido, este endereco ficava aberto a qualquer pessoa
+            // com o valor que estava escrito no codigo. Recusar e o correcto.
+            throw new Error("JWT_SECRET nao definida; geracao de artigos desactivada.");
+          }
         if (input.secret !== expectedSecret) {
           throw new Error("Unauthorized");
         }
@@ -510,6 +515,7 @@ export const appRouter = router({
       .mutation(async ({ input }) => {
         try {
           const response = await invokeLLM({
+      effort: "low", // chat do site: o visitante esta a espera
             messages: [
               { role: "system", content: TEAM24_SYSTEM_PROMPT },
               ...input.messages,

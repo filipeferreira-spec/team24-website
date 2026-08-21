@@ -21,7 +21,6 @@ import type { Request, Response } from "express";
 import { eq } from "drizzle-orm";
 import { getDb } from "./db";
 import { outreachContactos } from "../drizzle/schema";
-import { sdk } from "./_core/sdk";
 
 const ODOO_URL = process.env.ODOO_URL || "https://team24.thinkopen.solutions";
 const ODOO_DB = process.env.ODOO_DB || "team24";
@@ -203,13 +202,21 @@ async function upsertContactos(
 
 export async function syncOdooContactsHandler(req: Request, res: Response) {
   try {
-    // Autenticar — aceitar tanto cron como backoffice admin
-    try {
-      await sdk.authenticateRequest(req);
-    } catch {
-      res.status(403).json({ error: "forbidden" });
-      return;
-    }
+      // Autenticar pela chave de API, como as outras rotas agendadas fazem.
+      // Antes usava a autenticacao OAuth da Manus, que saiu com a plataforma.
+      const chaveEsperada = process.env.PROSPECTING_API_KEY;
+      if (!chaveEsperada) {
+        console.error("[SyncOdoo] PROSPECTING_API_KEY nao definida; rota desactivada.");
+        res.status(503).json({ error: "nao configurado" });
+        return;
+      }
+      const chaveRecebida =
+        (req.headers["x-api-key"] as string) ||
+        String(req.headers.authorization ?? "").replace("Bearer ", "");
+      if (chaveRecebida !== chaveEsperada) {
+        res.status(403).json({ error: "forbidden" });
+        return;
+      }
 
     const db = await getDb();
     if (!db) {

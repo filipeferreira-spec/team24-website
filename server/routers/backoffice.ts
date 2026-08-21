@@ -3,7 +3,7 @@ import { eq, desc } from "drizzle-orm";
 import * as crypto from "crypto";
 import { z } from "zod";
 import { publicProcedure, router } from "../_core/trpc";
-import { notifyOwner } from "../_core/notification";
+import { notifyOwner } from "../notificarDono";
 import { sendQuestionarioEmail, sendEmailRejeicao, sendEmailCandidaturaEmAnalise, sendEmailConfirmacaoCandidatura } from "../odoo";
 import { getDb } from "../db";
 import {

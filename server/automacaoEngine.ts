@@ -9,7 +9,6 @@ import {
   crmLeads, crmEmpresas, crmContactos, crmAlertas, crmActividades,
   type CrmAutomacao,
 } from "../drizzle/schema";
-import { invokeLLM } from "./_core/llm";
 
 // ─── Tipos ────────────────────────────────────────────────────────────────────
 export interface TriggerContext {

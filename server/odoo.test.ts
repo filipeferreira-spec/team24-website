@@ -1,7 +1,24 @@
+/**
+ * ATENCAO: estes testes NAO sao simulacoes.
+ *
+ * Ligam-se ao Odoo a serio e criam registos verdadeiros: leads no CRM, contactos
+ * na lista de newsletter e emails enviados. Correr `pnpm test` com as variaveis
+ * do Odoo definidas enche o CRM de producao de lixo.
+ *
+ * Ate hoje so nao acontecia por acidente: o vitest nao carrega o .env. Isso nao e
+ * uma protecao — basta alguem acrescentar esse carregamento.
+ *
+ * Ficam desligados por omissao. Para os correr de proposito, contra um Odoo de
+ * testes e nunca contra producao:
+ *
+ *     ODOO_TESTES_REAIS=1 npx vitest run server/odoo.test.ts
+ */
 import { describe, it, expect } from "vitest";
 import { testOdooConnection, createOdooLead, subscribeOdooNewsletter, sendOdooEbookEmail, sendOdooNewsletterWelcomeEmail } from "./odoo";
 
-describe("Odoo connectivity", () => {
+const correrAValer = process.env.ODOO_TESTES_REAIS === "1";
+
+describe.skipIf(!correrAValer)("Odoo connectivity (toca em dados reais)", () => {
   it("should connect to Odoo and return server version", async () => {
     const version = await testOdooConnection();
     expect(typeof version).toBe("string");

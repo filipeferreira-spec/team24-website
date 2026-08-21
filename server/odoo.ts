@@ -825,3 +825,48 @@ export async function sendEmailCandidaturaEmAnalise(
   const sendFault = parseXmlRpcFault(sendXml);
   if (sendFault) throw new Error(`Odoo send em_analise mail failed: ${sendFault}`);
 }
+
+/**
+ * Envio generico de email pelo Odoo.
+ *
+ * Existe para que codigo novo nao tenha de repetir o par create + send que as
+ * funcoes acima repetem oito vezes. Passa pelo desvio de seguranca como todas
+ * as outras (a interceptacao esta no xmlRpcObject).
+ */
+export async function enviarEmailSimples(
+  destinatario: string,
+  assunto: string,
+  corpoHtml: string,
+  remetente = "TEAM 24 <marketing@team24.pt>"
+): Promise<void> {
+  const uid = await getUid();
+
+  const createXml = await xmlRpcObject(
+    uid,
+    "mail.mail",
+    "create",
+    `<value><struct>
+      <member><name>subject</name><value><string>${escapeXml(assunto)}</string></value></member>
+      <member><name>email_from</name><value><string>${escapeXml(remetente)}</string></value></member>
+      <member><name>email_to</name><value><string>${escapeXml(destinatario)}</string></value></member>
+      <member><name>body_html</name><value><string>${escapeXml(corpoHtml)}</string></value></member>
+      <member><name>auto_delete</name><value><boolean>1</boolean></value></member>
+    </struct></value>`
+  );
+
+  const createFault = parseXmlRpcFault(createXml);
+  if (createFault) throw new Error(`Odoo create mail failed: ${createFault}`);
+
+  const mailId = parseXmlRpcInt(createXml);
+  if (!mailId) throw new Error("Odoo create mail returned no ID");
+
+  const sendXml = await xmlRpcObject(
+    uid,
+    "mail.mail",
+    "send",
+    `<value><array><data><value><int>${mailId}</int></value></data></array></value>`
+  );
+
+  const sendFault = parseXmlRpcFault(sendXml);
+  if (sendFault) throw new Error(`Odoo send mail failed: ${sendFault}`);
+}

@@ -10,8 +10,8 @@
  * 6. Publica automaticamente na BD
  */
 
-import { invokeLLM } from "./_core/llm";
-import { generateImage } from "./_core/imageGeneration";
+import { invokeLLM } from "./ia";
+import { generateImage } from "./imagemArtigo";
 import { getDb } from "./db";
 import { recursos } from "../drizzle/schema";
 import { eq } from "drizzle-orm";
@@ -110,6 +110,7 @@ async function researchKeywordsAndPlanArticle(
   const existingList = existingTitles.slice(0, 20).join(", ") || "nenhum ainda";
 
   const response = await invokeLLM({
+      effort: "high", max_tokens: 16000, // artigo completo: qualidade acima de velocidade
     messages: [
       {
         role: "system",
@@ -233,6 +234,7 @@ export async function generateBlogArticle(): Promise<{
 
     // 4. Gerar artigo completo com as keywords identificadas
     const articleResponse = await invokeLLM({
+      effort: "high", // artigo completo: qualidade acima de velocidade
       messages: [
         {
           role: "system",
@@ -273,7 +275,7 @@ Responde APENAS com JSON válido:
         },
       ],
       response_format: { type: "json_object" },
-      max_tokens: 4096,
+      max_tokens: 16000, // 4096 cortava artigos longos a meio
     });
 
     const rawContent = articleResponse.choices?.[0]?.message?.content;

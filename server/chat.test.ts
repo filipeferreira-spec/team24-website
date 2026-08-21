@@ -3,7 +3,7 @@ import { appRouter } from "./routers";
 import type { TrpcContext } from "./_core/context";
 
 // Mock invokeLLM to avoid real API calls in tests
-vi.mock("./_core/llm", () => ({
+vi.mock("./ia", () => ({
   invokeLLM: vi.fn().mockResolvedValue({
     choices: [
       {
@@ -59,7 +59,7 @@ describe("chat.sendMessage", () => {
   });
 
   it("returns error message when LLM fails", async () => {
-    const { invokeLLM } = await import("./_core/llm");
+    const { invokeLLM } = await import("./ia");
     vi.mocked(invokeLLM).mockRejectedValueOnce(new Error("LLM unavailable"));
 
     const ctx = createPublicContext();
