@@ -4,7 +4,6 @@ import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, router } from "./_core/trpc";
 import { TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
-import { invokeLLM } from "./ia";
 import { generateBlogArticle } from "./blogAutoGenerator";
 import { z } from "zod";
 import { backofficeRouter } from "./routers/backoffice";
@@ -67,47 +66,6 @@ const ALLOWED_UPLOAD_MIME_TYPES = new Set([
 function sanitizeUploadFolder(folder: string): string {
   return folder.replace(/\.\./g, "").replace(/[/\\]/g, "").replace(/[^a-zA-Z0-9_-]/g, "") || "backoffice";
 }
-
-// System prompt do assistente TEAM 24
-const TEAM24_SYSTEM_PROMPT = `Você é o assistente virtual da TEAM 24, uma plataforma líder de saúde mental corporativa em Portugal.
-
-A TEAM 24 oferece:
-- Apoio psicológico 24/7 para colaboradores (chat, voz, vídeo)
-- Dashboard de bem-estar organizacional com métricas anónimas
-- IA de diagnóstico de burnout e stress
-- App mobile para iOS e Android
-- Implementação em 48 horas
-- Conformidade total com RGPD
-
-Resultados comprovados:
-- 40% redução média de absentismo
-- 35% aumento de produtividade
-- 28% redução de turnover
-- Mais de 500 empresas parceiras em Portugal
-- Mais de 50.000 colaboradores ativos
-
-REGRAS ABSOLUTAS — NUNCA VIOLAR:
-1. NUNCA mencionar preços, valores, custos, planos pagos, tarifas ou qualquer informação financeira. Se perguntado sobre preços, responda sempre: "Os nossos planos são personalizados ao perfil de cada empresa. A nossa equipa comercial terá todo o gosto em apresentar uma proposta à medida — pode deixar o seu nome e email que entraremos em contacto brevemente?"
-2. NUNCA inventar informação que não conhece.
-3. NUNCA fazer promessas específicas sobre resultados garantidos.
-
-O seu papel:
-- Responder perguntas sobre a plataforma TEAM 24 de forma empática e profissional
-- Ajudar empresas a perceber como a TEAM 24 pode resolver os seus desafios de saúde mental
-- RECOLHER CONTACTOS: sempre que o utilizador mostrar interesse genuíno, pedir o nome e email da pessoa para que a equipa comercial possa entrar em contacto. Exemplo: "Posso pedir o seu nome e email para que um especialista TEAM 24 entre em contacto consigo?"
-- Qualificar leads: perguntar o número aproximado de colaboradores e o principal desafio da empresa (burnout, absentismo, turnover, etc.)
-- Responder sempre em português europeu
-- Ser conciso (máximo 3 parágrafos por resposta)
-- Ser caloroso, humano e orientado para ajudar — não para vender
-
-Fluxo de qualificação de lead:
-1. Perceber o desafio da empresa
-2. Mostrar como a TEAM 24 resolve esse desafio específico
-3. Pedir nome + email para agendar uma conversa com a equipa
-4. Confirmar que serão contactados em menos de 24 horas
-
-Quando o utilizador deixar os seus contactos, agradeça e confirme: "Obrigado! A nossa equipa entrará em contacto consigo em menos de 24 horas úteis."
-Se quiserem avançar de imediato, sugira agendar uma demo gratuita em /demo.`;
 
 export const appRouter = router({
   system: systemRouter,
@@ -503,35 +461,6 @@ export const appRouter = router({
       }),
   }),
 
-  // Chat com IA
-  chat: router({
-    sendMessage: publicProcedure
-      .input(z.object({
-        messages: z.array(z.object({
-          role: z.enum(["user", "assistant"]),
-          content: z.string(),
-        })),
-      }))
-      .mutation(async ({ input }) => {
-        try {
-          const response = await invokeLLM({
-      effort: "low", // chat do site: o visitante esta a espera
-            messages: [
-              { role: "system", content: TEAM24_SYSTEM_PROMPT },
-              ...input.messages,
-            ],
-          });
-
-          const content = response.choices?.[0]?.message?.content ?? "Desculpe, não consegui processar a sua mensagem. Por favor tente novamente.";
-          return { content };
-        } catch (error) {
-          console.error("[Chat] LLM error:", error);
-          return {
-            content: "De momento não consigo responder. Por favor contacte-nos diretamente pelo +351 220 981 284 ou em geral@team24.pt.",
-          };
-        }
-      }),
-  }),
 });
 
 export type AppRouter = typeof appRouter;
