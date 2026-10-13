@@ -13,6 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { CRMProspecting } from "./CRMProspecting";
 import CRMEquipa from "./CRMEquipa";
 import CRMActividade from "./CRMActividade";
+import CRMResultados from "./CRMResultados";
 
 // ─── Tipos ───────────────────────────────────────────────────────────────────
 type Fase = "leads"|"em_tratamento"|"reuniao_agendada"|"proposta_enviada"|"proposta_adjudicada"|"won"|"renovacoes_pendente"|"contratos_renovados"|"contratos_terminados"|"servicos_isolados"|"lost";
@@ -104,6 +105,7 @@ function Sidebar({ section, setSection, user, onLogout }: {
     { id: "reunioes", icon: "◷", label: "Reuniões" },
     { id: "equipa", icon: "👥", label: "Equipa" },
     { id: "actividade", icon: "📊", label: "Actividade" },
+    { id: "resultados", icon: "◆", label: "Resultados (Odoo)" },
     { id: "automacoes", icon: "⚡", label: "Automações" },
     { id: "qualidade", icon: "✦", label: "Qualidade de Dados" },
     ...(user?.role === "admin" ? [{ id: "admin", icon: "⚙", label: "Administração" }] : []),
@@ -4550,6 +4552,7 @@ export default function CRM() {
         {section === "prospecting" && <CRMProspecting />}
         {section === "equipa" && <CRMEquipa />}
         {section === "actividade" && <CRMActividade />}
+        {section === "resultados" && <CRMResultados />}
         {section === "alertas" && <Alertas />}
         {section === "reunioes" && <Reunioes />}
         {section === "automacoes" && <Automacoes />}

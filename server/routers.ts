@@ -13,6 +13,7 @@ import { crmAutomacoesRouter } from "./routers/crmAutomacoes";
 import { crmQualidadeRouter } from "./routers/crmQualidade";
 import { equipaRouter } from "./routers/equipa";
 import { actividadeComercialRouter } from "./routers/actividadeComercial";
+import { crmResultadosRouter } from "./routers/crmResultados";
 import { storagePut } from "./storage";
 import { nanoid } from "nanoid";
 import { getDb } from "./db";
@@ -320,6 +321,7 @@ export const appRouter = router({
   crmAutomacoes: crmAutomacoesRouter,
   equipa: equipaRouter,
   actividadeComercial: actividadeComercialRouter,
+  crmResultados: crmResultadosRouter,
 
   // ─── QUESTIONÁRIOS PÚBLICOS (acesso por token) ───────────────────────────────────────────
   questionario: router({
